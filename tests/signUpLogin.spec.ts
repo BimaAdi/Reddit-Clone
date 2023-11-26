@@ -26,8 +26,8 @@ test.describe("sign_up and login", () => {
     await page.waitForURL("/");
     const item2 = await page.getByRole("listitem");
     const navItem = await item2.allInnerTexts();
-    expect(navItem).toContain("SignOut");
-    expect(navItem).not.toContain("SignIn");
+    await expect(navItem).toContain("SignOut");
+    await expect(navItem).not.toContain("SignIn");
   });
 
   test.afterEach(async () => {

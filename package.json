@@ -9,7 +9,7 @@
     "lint": "next lint",
     "db:generate": "prisma migrate dev --create-only",
     "db:migrate": "prisma migrate dev",
-    "test:e2e": "playwright test --headed",
+    "test:e2e": "playwright test",
     "test:e2edebug": "playwright test --debug"
   },
   "dependencies": {

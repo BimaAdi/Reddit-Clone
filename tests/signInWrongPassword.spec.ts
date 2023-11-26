@@ -16,12 +16,13 @@ test.describe("signIn wrong password", () => {
     await page.getByTestId("signInButton").click();
 
     // show alert when username or password not valid
-    const alertMessage = page.locator("div").filter({ hasText: /^Wrong username or Password$/ });
-    await alertMessage.waitFor();
-    expect(alertMessage).toHaveCount(1);
+    const alertMessage = await page.getByText("Wrong username or Password");
+    // await alertMessage.waitFor();
+
+    await expect(alertMessage).toBeVisible();
   });
 
   test.afterEach(async () => {
-    await clearDb();
+    await clearDb(); 
   });
 });
