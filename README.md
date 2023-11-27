@@ -31,3 +31,10 @@ Reddit Clone Kinda
 1. Migrate database `pnpm run db:migrate`
 1. Build project `pnpm run build`
 1. Run project `pnpm run start`
+
+## Road Map
+1. Create Post [v]
+2. Detail Post [v]
+3. Upvote [ ]
+4. Comment [ ]
+5. Scroll Post [ ]

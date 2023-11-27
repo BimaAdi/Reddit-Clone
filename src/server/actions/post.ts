@@ -12,7 +12,20 @@ export const getAllPost = async () => {
     take: 10,
     skip: 0,
   });
-  return posts
+  return posts;
+};
+
+export const getDetailPost = async (id: string) => {
+  const post = await prisma.post.findFirst({
+    where: {
+      id: id,
+    },
+    include: {
+      user: true,
+      FullPost: true,
+    }
+  });
+  return post;
 };
 
 export const createPostAction = authAction(

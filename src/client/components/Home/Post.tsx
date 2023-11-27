@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DownArrow from "../DownArrow";
 import UpArrow from "../UpArrow";
 import {
@@ -20,6 +21,7 @@ type PostProps = {
 };
 
 export default function Post({
+  id,
   title,
   post,
   vote_counter,
@@ -35,7 +37,7 @@ export default function Post({
         <div className="text-lg">{vote_counter}</div>
         <DownArrow selected={down_vote_selected} />
       </div>
-      <div>
+      <Link href={`${id}`}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
@@ -46,7 +48,7 @@ export default function Post({
           <div>{num_votes} Votes</div>
           <div>{num_comment} Comments</div>
         </CardFooter>
-      </div>
+      </Link>
     </Card>
   );
 }

@@ -17,6 +17,8 @@ model User {
   auth_session Session[]
   key          Key[]
   Post         Post[]
+  Comment      Comment[]
+  Vote         Vote[]
 }
 
 model Session {
@@ -50,6 +52,8 @@ model Post {
   user_id      String
   user         User       @relation(references: [id], fields: [user_id], onDelete: Cascade)
   FullPost     FullPost[]
+  Comment      Comment[]
+  Vote         Vote[]
 
   @@index([user_id])
 }
@@ -61,4 +65,25 @@ model FullPost {
   post      Post   @relation(references: [id], fields: [post_id], onDelete: Cascade)
 
   @@index([post_id])
+}
+
+model Comment {
+  id            String   @id @unique @db.Uuid
+  comment       String
+  comment_depth Int
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @default(now()) @db.Timestamptz()
+  post_id       String   @db.Uuid
+  post          Post     @relation(references: [id], fields: [post_id], onDelete: Cascade)
+  user_id       String
+  user          User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+}
+
+model Vote {
+  id         String   @id @unique @db.Uuid
+  post_id    String   @db.Uuid
+  post       Post     @relation(references: [id], fields: [post_id], onDelete: Cascade)
+  user_id    String
+  user       User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  created_at DateTime @default(now()) @db.Timestamptz()
 }
