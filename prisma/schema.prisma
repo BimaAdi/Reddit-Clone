@@ -68,15 +68,18 @@ model FullPost {
 }
 
 model Comment {
-  id            String   @id @unique @db.Uuid
-  comment       String
-  comment_depth Int
-  created_at    DateTime @default(now()) @db.Timestamptz()
-  updated_at    DateTime @default(now()) @db.Timestamptz()
-  post_id       String   @db.Uuid
-  post          Post     @relation(references: [id], fields: [post_id], onDelete: Cascade)
-  user_id       String
-  user          User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id                    String    @id @unique @db.Uuid
+  comment               String
+  comment_depth         Int
+  created_at            DateTime  @default(now()) @db.Timestamptz()
+  updated_at            DateTime  @default(now()) @db.Timestamptz()
+  post_id               String    @db.Uuid
+  post                  Post      @relation(references: [id], fields: [post_id], onDelete: Cascade)
+  user_id               String
+  user                  User      @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  commenting_comment_id String?   @db.Uuid
+  commenting            Comment?  @relation("sub_comment", fields: [commenting_comment_id], references: [id])
+  SubComments           Comment[] @relation("sub_comment")
 }
 
 model Vote {

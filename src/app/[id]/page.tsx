@@ -1,5 +1,4 @@
 import * as context from "next/headers";
-import Link from "next/link";
 import { validate } from "uuid";
 import AddComment from "@/client/components/Home/id/AddComment";
 import Comment from "@/client/components/Home/id/Comment";
@@ -7,6 +6,8 @@ import PostDetail from "@/client/components/Home/id/PostDetail";
 import { getDetailPost } from "@/server/actions/post";
 import { auth } from "@/server/auth/lucia";
 import { getCommentByPostId } from "@/server/actions/comment";
+import PostNotFound from "@/client/components/Home/id/PostNotFound";
+import SubComment from "@/client/components/Home/id/SubComment";
 
 export default async function PageDetail({
   params,
@@ -15,28 +16,21 @@ export default async function PageDetail({
 }) {
   const authRequest = auth.handleRequest("GET", context);
   const session = await authRequest.validate();
-  let post = null;
-  if (validate(params.id)) {
-    post = await getDetailPost({
-      id: params.id,
-      user: session
-        ? {
-            id: session.user.userId,
-            username: session.user.username,
-          }
-        : null,
-    });
+  if (!validate(params.id)) {
+    return <PostNotFound />;
   }
 
+  const post = await getDetailPost({
+    id: params.id,
+    user: session
+      ? {
+          id: session.user.userId,
+          username: session.user.username,
+        }
+      : null,
+  });
   if (!post) {
-    return (
-      <main className="max-w-[1200px] mx-auto">
-        <h2>Post not found</h2>
-        <Link href={"/"} className="underline text-blue-500">
-          back to home
-        </Link>
-      </main>
-    );
+    return <PostNotFound />;
   }
 
   const comments = await getCommentByPostId({ post_id: post.id });
@@ -56,13 +50,28 @@ export default async function PageDetail({
       />
       <div>Comments:</div>
       {session ? <AddComment post_id={post.id} /> : <></>}
+      <div className="w-full flex flex-col gap-4">
       {comments.map((comment) => (
-        <Comment
-          key={comment.id}
-          username={comment.user.username}
-          comment={comment.comment}
-        />
+        <>
+          <Comment
+            key={comment.id}
+            post_id={post.id}
+            comment_id={comment.id}
+            username={comment.user.username}
+            comment={comment.comment}
+          />
+          {comment.SubComments.map((sub_comment) => (
+            <SubComment
+              key={sub_comment.id}
+              post_id={post.id}
+              comment_id={comment.id}
+              comment={sub_comment.comment}
+              username={sub_comment.user.username}
+            />
+          ))}
+        </>
       ))}
+      </div>
     </main>
   );
 }
