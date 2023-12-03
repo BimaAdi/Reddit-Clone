@@ -4,6 +4,21 @@ import { authAction } from "../lib/safe-action";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../db/prisma";
 
+export const getCommentByPostId = async ({ post_id }: { post_id: string }) => {
+  const comments = await prisma.comment.findMany({
+    where: {
+      post_id: post_id,
+    },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+  return comments;
+};
+
 export const createCommentAction = authAction(
   z.object({
     comment: z.string().min(5).max(50),

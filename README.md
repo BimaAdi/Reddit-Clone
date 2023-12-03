@@ -36,5 +36,5 @@ Reddit Clone Kinda
 1. Create Post [v]
 2. Detail Post [v]
 3. Upvote [v]
-4. Comment [ ]
+4. Comment [v]
 5. Scroll Post [ ]

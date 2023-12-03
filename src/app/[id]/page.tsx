@@ -6,6 +6,7 @@ import Comment from "@/client/components/Home/id/Comment";
 import PostDetail from "@/client/components/Home/id/PostDetail";
 import { getDetailPost } from "@/server/actions/post";
 import { auth } from "@/server/auth/lucia";
+import { getCommentByPostId } from "@/server/actions/comment";
 
 export default async function PageDetail({
   params,
@@ -38,6 +39,8 @@ export default async function PageDetail({
     );
   }
 
+  const comments = await getCommentByPostId({ post_id: post.id });
+
   return (
     <main className="max-w-[1200px] mx-auto px-2 flex flex-col gap-4">
       <PostDetail
@@ -52,19 +55,14 @@ export default async function PageDetail({
         is_down_vote={post.is_down_vote}
       />
       <div>Comments:</div>
-      {session ? <AddComment /> : <></>}
-      <Comment
-        username="John"
-        comment="Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, ab."
-      />
-      <Comment
-        username="Doe"
-        comment="Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, ab."
-      />
-      <Comment
-        username="Smith"
-        comment="Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, ab."
-      />
+      {session ? <AddComment post_id={post.id} /> : <></>}
+      {comments.map((comment) => (
+        <Comment
+          key={comment.id}
+          username={comment.user.username}
+          comment={comment.comment}
+        />
+      ))}
     </main>
   );
 }
