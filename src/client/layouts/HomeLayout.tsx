@@ -12,9 +12,9 @@ export default function HomeLayout({
   signOut: typeof signOutAction;
 }) {
   return (
-    <div className="min-h-screen w-screen relative">
+    <div className="min-h-screen max-w-screen relative">
       <Navbar isLogin={isLogin} signOut={signOut} />
-      <div className="m-5">{children}</div>
+      <div className="mt-5 pb-20">{children}</div>
       <Footer />
     </div>
   );
