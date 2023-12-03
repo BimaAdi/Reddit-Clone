@@ -35,6 +35,6 @@ Reddit Clone Kinda
 ## Road Map
 1. Create Post [v]
 2. Detail Post [v]
-3. Upvote [ ]
+3. Upvote [v]
 4. Comment [ ]
 5. Scroll Post [ ]

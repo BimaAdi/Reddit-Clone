@@ -16,7 +16,15 @@ export default async function PageDetail({
   const session = await authRequest.validate();
   let post = null;
   if (validate(params.id)) {
-    post = await getDetailPost(params.id);
+    post = await getDetailPost({
+      id: params.id,
+      user: session
+        ? {
+            id: session.user.userId,
+            username: session.user.username,
+          }
+        : null,
+    });
   }
 
   if (!post) {
@@ -33,11 +41,15 @@ export default async function PageDetail({
   return (
     <main className="max-w-[1200px] mx-auto px-2 flex flex-col gap-4">
       <PostDetail
+        id={post.id}
         title={post.title}
         full_post={post.FullPost[0].full_post}
+        vote_counter={post.vote_counter}
         num_votes={post.num_votes}
         num_comments={post.num_comments}
         author={post.user.username}
+        is_up_vote={post.is_up_vote}
+        is_down_vote={post.is_down_vote}
       />
       <div>Comments:</div>
       {session ? <AddComment /> : <></>}

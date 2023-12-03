@@ -1,4 +1,6 @@
-export default function UpArrow({ selected }: { selected: boolean }) {
+"use client";
+
+export default function UpArrow({ selected, onClick = () => {} }: { selected: boolean, onClick?: () => void }) {
   if (selected) {
     return (
       <svg
@@ -8,6 +10,7 @@ export default function UpArrow({ selected }: { selected: boolean }) {
         viewBox="0 0 30 30"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        onClick={onClick}
       >
         <rect
           width="13.8655"
@@ -28,6 +31,7 @@ export default function UpArrow({ selected }: { selected: boolean }) {
       viewBox="0 0 30 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      onClick={onClick}
     >
       <rect
         width="13.8655"

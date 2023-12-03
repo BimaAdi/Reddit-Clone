@@ -16,6 +16,7 @@ CREATE TABLE "Vote" (
     "id" UUID NOT NULL,
     "post_id" UUID NOT NULL,
     "user_id" TEXT NOT NULL,
+    "is_up_vote" BOOLEAN NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Vote_pkey" PRIMARY KEY ("id")

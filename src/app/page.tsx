@@ -8,10 +8,17 @@ import PostList from "@/client/components/Home/PostList";
 export default async function Home() {
   const authRequest = auth.handleRequest("GET", context);
   const session = await authRequest.validate();
-  const posts = await getAllPost();
+  const posts = await getAllPost({
+    user: session
+      ? {
+          id: session.user.userId,
+          username: session.user.username,
+        }
+      : null,
+  });
 
   return (
-    <main className="max-w-[1200px] mx-auto">
+    <main className="max-w-[1200px] mx-auto px-4">
       {session ? (
         <div className="py-6">
           <CreatePost createPost={createPostAction} />
@@ -25,7 +32,9 @@ export default async function Home() {
           to create new post
         </div>
       )}
-      <PostList posts={posts} />
+      <PostList
+        posts={posts}
+      />
     </main>
   );
 }

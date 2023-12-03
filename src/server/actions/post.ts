@@ -4,7 +4,11 @@ import { authAction } from "../lib/safe-action";
 import { prisma } from "../db/prisma";
 import { v4 as uuidv4 } from "uuid";
 
-export const getAllPost = async () => {
+export const getAllPost = async ({
+  user = null,
+}: {
+  user: { id: string; username: string } | null;
+}) => {
   const posts = await prisma.post.findMany({
     orderBy: {
       created_at: "desc",
@@ -12,20 +16,85 @@ export const getAllPost = async () => {
     take: 10,
     skip: 0,
   });
-  return posts;
+
+  let postsVote = posts.map((x) => ({
+    ...x,
+    is_up_vote: false,
+    is_down_vote: false,
+  }));
+
+  if (user) {
+    // check is upvote or down vote by user
+    let votes = await prisma.vote.findMany({
+      where: {
+        user_id: user.id,
+        post_id: {
+          in: posts.map((x) => x.id),
+        },
+      },
+    });
+
+    postsVote = postsVote.map((post) => {
+      let found_votes = votes.filter((x) => x.post_id === post.id);
+      if (found_votes.length > 0) {
+        let found_vote = found_votes[0];
+        return {
+          ...post,
+          is_up_vote: found_vote.is_up_vote === true,
+          is_down_vote: found_vote.is_up_vote === false,
+        };
+      }
+      return {
+        ...post,
+        is_up_vote: false,
+        is_down_vote: false,
+      };
+    });
+  }
+
+  return postsVote;
 };
 
-export const getDetailPost = async (id: string) => {
+export const getDetailPost = async (params: {
+  id: string;
+  user?: { id: string; username: string } | null;
+}) => {
   const post = await prisma.post.findFirst({
     where: {
-      id: id,
+      id: params.id,
     },
     include: {
       user: true,
       FullPost: true,
-    }
+    },
   });
-  return post;
+
+  if (post === null) {
+    return null;
+  }
+
+  if (params.user) {
+    let votes = await prisma.vote.findFirst({
+      where: {
+        user_id: params.user.id,
+        post_id: params.id,
+      },
+    });
+
+    if (votes) {
+      return {
+        ...post,
+        is_up_vote: votes.is_up_vote === true,
+        is_down_vote: votes.is_up_vote === false,
+      };
+    }
+  }
+
+  return {
+    ...post,
+    is_up_vote: false,
+    is_down_vote: false,
+  };
 };
 
 export const createPostAction = authAction(

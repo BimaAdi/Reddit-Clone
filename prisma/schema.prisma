@@ -85,5 +85,6 @@ model Vote {
   post       Post     @relation(references: [id], fields: [post_id], onDelete: Cascade)
   user_id    String
   user       User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  is_up_vote Boolean
   created_at DateTime @default(now()) @db.Timestamptz()
 }
