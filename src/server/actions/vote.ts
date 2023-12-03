@@ -52,15 +52,21 @@ export const upVoteAction = authAction(
       });
     }
 
+    // handling if only one user doing voting
+    let vote_counter = is_already_up_votes
+      ? existingPost.vote_counter
+      : (existingPost.vote_counter += 1);
+    if (vote_counter === 0 && existingPost.num_votes === 1) {
+      vote_counter += 1;
+    }
+
     // Update post vote_counter and num_votes
     await prisma.post.update({
       where: {
         id: existingPost.id,
       },
       data: {
-        vote_counter: is_already_up_votes
-          ? existingPost.vote_counter
-          : (existingPost.vote_counter += 1),
+        vote_counter: vote_counter,
         num_votes: is_new_votes
           ? (existingPost.num_votes += 1)
           : existingPost.num_votes,
@@ -121,15 +127,21 @@ export const downVoteAction = authAction(
       });
     }
 
+    // handling if only one user doing voting
+    let vote_counter = is_already_down_votes
+      ? existingPost.vote_counter
+      : (existingPost.vote_counter -= 1);
+    if (vote_counter === 0 && existingPost.num_votes === 1) {
+      vote_counter -= 1;
+    }
+
     // Update post vote_counter and num_votes
     await prisma.post.update({
       where: {
         id: existingPost.id,
       },
       data: {
-        vote_counter: is_already_down_votes
-          ? existingPost.vote_counter
-          : (existingPost.vote_counter -= 1),
+        vote_counter: vote_counter,
         num_votes: is_new_votes
           ? (existingPost.num_votes += 1)
           : existingPost.num_votes,

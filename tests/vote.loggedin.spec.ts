@@ -46,7 +46,7 @@ test("upvote then downvote", async ({ page }) => {
   await expect(page.getByText("1", { exact: true })).toBeVisible();
   // Test Downvote
   await page.locator("rect").nth(1).click();
-  await expect(page.getByText("0", { exact: true })).toBeVisible();
+  await expect(page.getByText("-1", { exact: true })).toBeVisible();
 
   // Go to detail post page
   await page.getByRole("link", { name: "my test post" }).click();
@@ -54,10 +54,9 @@ test("upvote then downvote", async ({ page }) => {
   // Test Upvote
   await page.locator("rect").first().click();
   await expect(page.getByText("1", { exact: true })).toBeVisible();
-  await page.locator("rect").nth(1).click();
   // Test Downvote
-  await expect(page.getByText("0", { exact: true })).toBeVisible();
-  await page.getByText("0", { exact: true }).click();
+  await page.locator("rect").nth(1).click();
+  await expect(page.getByText("-1", { exact: true })).toBeVisible();
 });
 
 test.afterEach(async () => {
