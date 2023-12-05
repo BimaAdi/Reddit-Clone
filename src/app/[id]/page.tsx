@@ -3,11 +3,10 @@ import { validate } from "uuid";
 import AddComment from "@/client/components/Home/id/AddComment";
 import Comment from "@/client/components/Home/id/Comment";
 import PostDetail from "@/client/components/Home/id/PostDetail";
+import PostNotFound from "@/client/components/Home/id/PostNotFound";
 import { getDetailPost } from "@/server/actions/post";
 import { auth } from "@/server/auth/lucia";
 import { getCommentByPostId } from "@/server/actions/comment";
-import PostNotFound from "@/client/components/Home/id/PostNotFound";
-import SubComment from "@/client/components/Home/id/SubComment";
 
 export default async function PageDetail({
   params,
@@ -60,15 +59,6 @@ export default async function PageDetail({
             username={comment.user.username}
             comment={comment.comment}
           />
-          {comment.SubComments.map((sub_comment) => (
-            <SubComment
-              key={sub_comment.id}
-              post_id={post.id}
-              comment_id={comment.id}
-              comment={sub_comment.comment}
-              username={sub_comment.user.username}
-            />
-          ))}
         </>
       ))}
       </div>

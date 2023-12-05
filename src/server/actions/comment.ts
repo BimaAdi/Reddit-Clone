@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { authAction } from "../lib/safe-action";
+import { action, authAction } from "../lib/safe-action";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../db/prisma";
 
@@ -27,6 +27,25 @@ export const getCommentByPostId = async ({ post_id }: { post_id: string }) => {
   });
   return comments;
 };
+
+export const getSubCommentByCommentIdAction = action(
+  z.object({
+    comment_id: z.string()
+  }), async (data) => {
+    const comments = await prisma.comment.findMany({
+      where: {
+        commenting_comment_id: data.comment_id
+      },
+      include: {
+        user: true
+      },
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+    return comments;
+  }
+);
 
 export const createCommentAction = authAction(
   z.object({
@@ -73,7 +92,7 @@ export const createCommentAction = authAction(
 
 export const createSubCommmentAction = authAction(
   z.object({
-    comment: z.string().min(5).max(50),
+    comment: z.string().min(1).max(50),
     post_id: z.string(),
     comment_id: z.string(),
   }),

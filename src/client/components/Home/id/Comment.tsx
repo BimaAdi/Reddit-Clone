@@ -4,8 +4,8 @@ import { useAction } from "next-safe-action/hook";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
 import { Input } from "../../ui/input";
-import { createSubCommmentAction } from "@/server/actions/comment";
-import { useRouter } from "next/navigation";
+import SubComment from "./SubComment";
+import { createSubCommmentAction, getSubCommentByCommentIdAction } from "@/server/actions/comment";
 
 type Props = {
   post_id: string;
@@ -22,14 +22,41 @@ export default function Comment({
 }: Props) {
   const [showAddComment, setShowAddComment] = useState(false);
   const [commentinput, setCommentInput] = useState<string>("");
-  const router = useRouter();
+  const [subComments, setSubComments] = useState<{
+    id: string,
+    post_id: string,
+    comment_id: string,
+    comment: string,
+    username: string
+  }[]>([]);
+
+  const getSubCommentAct = useAction(getSubCommentByCommentIdAction, {
+    onSuccess: (data) => {
+      setSubComments(data.map((item) => ({
+        id: item.id,
+        post_id: item.post_id,
+        comment_id: comment_id,
+        comment: item.comment,
+        username: item.user.username
+      })))
+    }
+  });
+
   const createSubCommentAct = useAction(createSubCommmentAction, {
     onSuccess: () => {
       setShowAddComment(false);
       setCommentInput("");
-      router.refresh();
+      getSubCommentAct.execute({ comment_id: comment_id });
     },
   });
+
+  const onShowCommentsClick = () => {
+    if (subComments.length === 0) {
+      getSubCommentAct.execute({ comment_id: comment_id });
+    } else {
+      setSubComments([]);
+    }
+  }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -54,6 +81,12 @@ export default function Comment({
           >
             Add Comment
           </a>
+          <a
+            onClick={() => { onShowCommentsClick() }}
+            className="text-blue-500 underline cursor-pointer pl-2"
+          >
+            Show Comments
+          </a>
         </CardFooter>
       </Card>
       {showAddComment ? (
@@ -69,6 +102,16 @@ export default function Comment({
       ) : (
         <></>
       )}
+      {subComments.map((sub_comment) => (
+        <SubComment
+          key={sub_comment.id}
+          id={sub_comment.id}
+          post_id={sub_comment.post_id}
+          comment_id={sub_comment.comment_id}
+          comment={sub_comment.comment}
+          username={sub_comment.username}
+        />
+      ))}
     </div>
   );
 }
